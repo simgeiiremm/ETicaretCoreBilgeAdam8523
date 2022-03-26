@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DataAccess.Entities
 {
+    //[Table("ETicaretUrunler")] burada da tablo ismini değiştirebiliriz
     public class Urun :RecordBase
     {
         [Required] //string için yapılır null olmasını engeller
