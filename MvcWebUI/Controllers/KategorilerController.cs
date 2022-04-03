@@ -1,13 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Business.Models;
+using Business.Services.Bases;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MvcWebUI.Controllers
 {
     public class KategorilerController : Controller
     {
-        public IActionResult Index()
+        private readonly IKategoriService _kategoriService;
+
+        public KategorilerController(IKategoriService kategoriService)
         {
-            return View();
+            _kategoriService = kategoriService;
         }
+
+        public IActionResult Index() // ~/Kategoriler/Index
+        {
+            List<KategoriModel> model =_kategoriService.Query().ToList();
+            return View(model); //Views/Kategoriler/Index.cshtml
+        }
+
+        public IActionResult OlusturGetir() // ~/Kategoriler/OlusturGetir
+        {
+            return View("OlusturHtml");
+        }
+
+        public IActionResult OlusturGonder(string Adi, string Aciklamasi)
+        {
+            KategoriModel model = new KategoriModel()
+            {
+                Adi = Adi,
+                Aciklamasi = Aciklamasi
+            };
+            var result = _kategoriService.Add(model);
+        }
+
+
         /*
         IActionResult
         ActionResult
