@@ -18,12 +18,12 @@ namespace MvcWebUI.Controllers
             List<KategoriModel> model =_kategoriService.Query().ToList();
             return View(model); //Views/Kategoriler/Index.cshtml
         }
-
+        [HttpGet]
         public IActionResult OlusturGetir() // ~/Kategoriler/OlusturGetir
         {
             return View("OlusturHtml");
         }
-
+        [HttpPost]
         public IActionResult OlusturGonder(string Adi, string Aciklamasi)
         {
             KategoriModel model = new KategoriModel()
@@ -32,8 +32,37 @@ namespace MvcWebUI.Controllers
                 Aciklamasi = Aciklamasi
             };
             var result = _kategoriService.Add(model);
+            if(result.IsSuccessful)
+            { 
+                //return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
+            }
+            return View("Hata", result.Message);
         }
-
+        public IActionResult Edit(int? id) //Kategoriler/Edit/1
+        {
+            if (id == null)
+            {
+                return View("Hata", "Id gereklidir!");
+            }
+            KategoriModel model = _kategoriService.Query().SingleOrDefault(k => k.Id == id);
+            if (model == null)
+                return View("Hata!", "Kategori bulunamadı!");
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(KategoriModel model) // ~/Kategoriler/Edit
+        {
+            if(ModelState.IsValid)
+            {
+                var result = _kategoriService.Update(model);
+                if(result.IsSuccessful)
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", result.Message);
+            }
+            return View(model);
+        }
 
         /*
         IActionResult
