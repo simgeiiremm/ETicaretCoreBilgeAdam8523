@@ -1,6 +1,13 @@
 ﻿@model List<KategoriModel>
 <h2>Kategoriler</h2>
 
+@if (TempData["Mesaj"] != null)
+{
+    <p class ="text-primary">
+        @TempData["Mesaj"]
+    </p>
+}
+
 <p>
     <a asp-action="OlusturGetir">Yeni Kategori</a>
 </p>
@@ -13,6 +20,9 @@
         </th>
         <th>
             Açıklaması
+        </th>
+        <th>
+            Ürün Sayısı
         </th>
         <th>
 
@@ -30,7 +40,12 @@
                     @kategori.Aciklamasi
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@kategori.Id">Düzenle</a>
+                    @kategori.UrunSayisiDisplay
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@kategori.Id">Düzenle</a> |
+                    <a asp-action="Details" asp-route-id="@kategori.Id">Detay</a> |
+                    <a asp-action="Delete" asp-route-id="@kategori.Id">Sil</a> |
                 </td>
             </tr>
         }

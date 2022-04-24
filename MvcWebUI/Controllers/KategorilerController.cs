@@ -1,4 +1,5 @@
-﻿using Business.Models;
+﻿using AppCore.Business.Models.Results;
+using Business.Models;
 using Business.Services.Bases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,6 +64,33 @@ namespace MvcWebUI.Controllers
             }
             return View(model);
         }
+
+        public IActionResult Details(int? id) //~/Kategoriler/Details
+        {
+            if (id == null)
+                return View("Hata", "Id gereklidir!");
+            KategoriModel model = _kategoriService.Query().SingleOrDefault(k => k.Id ==id.Value);
+            if (model == null)
+                return View("Hata", "Kategori bulunamadı!");
+            return View(model);
+            
+        }
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+                return View("Hata", "Id gereklidir!");
+            Result result = _kategoriService.Delete(id.Value);
+            TempData["Mesaj"]=result.Message;
+            return RedirectToAction(nameof(Index));
+
+        }
+
+
+
+
+
+
+
 
         /*
         IActionResult
