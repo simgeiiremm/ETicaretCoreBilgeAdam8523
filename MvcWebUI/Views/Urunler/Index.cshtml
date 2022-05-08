@@ -8,6 +8,12 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@if (TempData["Mesaj"] != null)
+{
+    <p class="bg-success text-white">
+        @TempData["Mesaj"]
+    </p>
+}
 <p>
     <a asp-action="Create">Yeni Ürün</a>
 </p>
@@ -28,7 +34,7 @@
                 @Html.DisplayNameFor(model => model.StokMiktari)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SonKullanmaTarihiDisplay)
+                @Html.DisplayNameFor(model => model.SonKullanmaTarihiDisplay) (Yıl-Ay-Gün)
             </th>
             @*<th>
                 @Html.DisplayNameFor(model => model.Kategori)
@@ -78,9 +84,14 @@
 <link rel="stylesheet" href="/lib/datatables/css/jquery.dataTables.min.css" />
 <script src="/lib/datatables/js/jquery.dataTables.min.js"></script>
 
+@*datatablesTurkish format ekledik önce json klasörü oluşturduk wwwroot altına sonra open folder diye açıp datatables utf-8 formatı yapıp farklı kaydettik*@
     <script>
          $(document).ready( function () {
-        $('#urunler').DataTable();
+        $('#urunler').DataTable({
+            language : {
+                url: "/json/datatablesTurkish.json"
+            }
+        });
     } );
     </script>
 

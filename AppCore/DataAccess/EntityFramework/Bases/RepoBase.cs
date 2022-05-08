@@ -36,8 +36,10 @@ namespace AppCore.DataAccess.EntityFramework.Bases
             var entities = DbContext.Set<TEntity>().Where(predicate).ToList();
             foreach (var entity in entities)
             {
-                Delete(entity, save);  
+                Delete(entity, false);  
             }
+            if (save)
+                Save();
         }
 
         public void Dispose()
