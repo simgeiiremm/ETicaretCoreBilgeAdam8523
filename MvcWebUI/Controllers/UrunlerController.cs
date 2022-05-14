@@ -47,15 +47,14 @@ namespace MvcWebUI.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("Hata", "Id gereklidir!");
             }
 
-            var urun = _context.Urunler
-                .Include(u => u.Kategori)
-                .SingleOrDefault(m => m.Id == id);
+            UrunModel urun = _urunService.Query().SingleOrDefault(u => u.Id == id.Value);
+            
             if (urun == null)
             {
-                return NotFound();
+                return View("Hata", "Ürün bulunamadı!");
             }
 
             return View(urun);
@@ -103,15 +102,12 @@ namespace MvcWebUI.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("Hata", "Id gereklidir!");
             }
-
-            var urun = _context.Urunler.Find(id);
+            UrunModel urun = _urunService.Query().SingleOrDefault(u => u.Id == id);
             if (urun == null)
-            {
-                return NotFound();
-            }
-            ViewData["KategoriId"] = new SelectList(_context.Kategoriler, "Id", "Adi", urun.KategoriId);
+                return View("Hata", "Ürün bulunamadı!");
+            ViewBag.KategoriId = new SelectList(_kategoriService.Query().ToList(), "Id", "Adi", urun.KategoriId);
             return View(urun);
         }
 
@@ -120,15 +116,17 @@ namespace MvcWebUI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Urun urun)
+        public IActionResult Edit(UrunModel urun)
         {
             if (ModelState.IsValid)
             {
-                _context.Update(urun);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                var result = _urunService.Update(urun);
+                if (result.IsSuccessful)
+                    //return Redirect("https://bilgeadam.com");
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", result.Message);
             }
-            ViewData["KategoriId"] = new SelectList(_context.Kategoriler, "Id", "Adi", urun.KategoriId);
+            ViewBag.KategoriId = new SelectList(_kategoriService.Query().ToList(), "Id", "Adi", urun.KategoriId);
             return View(urun);
         }
 
@@ -137,29 +135,14 @@ namespace MvcWebUI.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("Hata", "Id gereklidir!");
             }
-
-            var urun = _context.Urunler
-                .Include(u => u.Kategori)
-                .SingleOrDefault(m => m.Id == id);
-            if (urun == null)
-            {
-                return NotFound();
-            }
-
-            return View(urun);
-        }
-
-        // POST: Urunler/Delete
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var urun = _context.Urunler.Find(id);
-            _context.Urunler.Remove(urun);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            var result = _urunService.Delete(id.Value);
+            if (result.IsSuccessful)
+                TempData["Success"] = result.Message;
+            else
+                TempData["Error"] = result.Message;
+                return RedirectToAction(nameof(Index));          
         }
     }
 }

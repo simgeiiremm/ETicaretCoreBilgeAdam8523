@@ -38,7 +38,8 @@ namespace Business.Services
 
         public Result Delete(int id)
         {
-            throw new NotImplementedException();
+            Repo.Delete(u => u.Id == id);
+            return new SuccessResult("Ürün başarıyla silindi!");
         }
 
         public void Dispose()
@@ -48,18 +49,21 @@ namespace Business.Services
 
         public IQueryable<UrunModel> Query()
         {
-            return Repo.Query().OrderBy(u => u.Adi).Select(u => new UrunModel()
+            return Repo.Query("Kategori").OrderBy(u => u.Adi).Select(u => new UrunModel() //entity ürün içerisindeki kategori kategoriyi query'nin icerisine yazdık ki kategoriadidisplayinden ulaşalım
             {
+                Id = u.Id,
                 Aciklamasi = u.Aciklamasi,
                 Adi = u.Adi,
                 BirimFiyati = u.BirimFiyati,
                 KategoriId = u.KategoriId,
                 SonKullanmaTarihi = u.SonKullanmaTarihi,
                 StokMiktari = u.StokMiktari,
+                
 
                 //yıl ay gün formatında ekledik ki senelere göre sonkullanma tarihini getirsin
                 BirimFiyatiDisplay = u.BirimFiyati.ToString("C2", new CultureInfo("tr-TR")), // "en-US"
-                SonKullanmaTarihiDisplay = u.SonKullanmaTarihi.HasValue ? u.SonKullanmaTarihi.Value.ToString("yyyy.MM.dd") : ""
+                SonKullanmaTarihiDisplay = u.SonKullanmaTarihi.HasValue ? u.SonKullanmaTarihi.Value.ToString("yyyy.MM.dd") : "",
+                KategoriAdiDisplay = u.Kategori.Adi
 
             });
 
@@ -67,7 +71,20 @@ namespace Business.Services
 
         public Result Update(UrunModel model)
         {
-            throw new NotImplementedException();
+            if(Repo.Query().Any(u => u.Adi.ToLower() == model.Adi.ToLower().Trim() && u.Id != model.Id))
+                return new ErrorResult("Belirtilen ürün adına sahip kayıt bulunmaktadır!");
+            if (model.SonKullanmaTarihi.HasValue && model.SonKullanmaTarihi.Value < DateTime.Today)
+                return new ErrorResult("Son kullanma tarihi bugün veya daha sonrası olmalıdır!");
+            //Urun entity = Repo.Query().SingleOrDefault(u => u.Id == model.Id)
+            Urun entity = Repo.Query(u => u.Id == model.Id).SingleOrDefault();
+            entity.Adi = model.Adi.Trim();
+            entity.Aciklamasi = model.Aciklamasi?.Trim();
+            entity.BirimFiyati = model.BirimFiyati.Value;
+            entity.StokMiktari = model.StokMiktari.Value;
+            entity.SonKullanmaTarihi = model.SonKullanmaTarihi;
+            entity.KategoriId = model.KategoriId.Value;
+            Repo.Update(entity);
+            return new SuccessResult();
         }
     }
 }

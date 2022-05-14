@@ -14,6 +14,22 @@
         @TempData["Mesaj"]
     </p>
 }
+
+@if (TempData["Success"] != null)
+{
+    <p class="text-success">
+        @TempData["Success"]
+    </p>
+}
+
+@if (TempData["Error"] != null)
+{
+    <p class="text-danger">
+        @TempData["Error"]
+    </p>
+}
+
+
 <p>
     <a asp-action="Create">Yeni Ürün</a>
 </p>
@@ -73,7 +89,7 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Detay</a>&nbsp;|&nbsp;
                     <a asp-action="Edit" asp-route-id="@item.Id">Düzenle</a>&nbsp;|&nbsp;
-                    <a asp-action="Delete" asp-route-id="@item.Id">Sil</a>
+                    <a href="#" onclick="sil(@item.Id);">Sil</a>
                 </td>
             </tr>
         }
@@ -83,16 +99,32 @@
 @section Scripts {
 <link rel="stylesheet" href="/lib/datatables/css/jquery.dataTables.min.css" />
 <script src="/lib/datatables/js/jquery.dataTables.min.js"></script>
+<link href="/lib/AlertifyJS/css/alertify.min.css" rel="stylesheet" />
+<script src="/lib/AlertifyJS/alertify.min.js"></script>
+
+
 
 @*datatablesTurkish format ekledik önce json klasörü oluşturduk wwwroot altına sonra open folder diye açıp datatables utf-8 formatı yapıp farklı kaydettik*@
-    <script>
-         $(document).ready( function () {
-        $('#urunler').DataTable({
-            language : {
-                url: "/json/datatablesTurkish.json"
-            }
-        });
-    } );
-    </script>
-
+<script>
+           $(document).ready( function () {
+          $('#urunler').DataTable({
+              language : {
+                  url: "/json/datatablesTurkish.json"
+              }
+          });
+      });
+      function sil(id)
+      {
+          alertify.confirm("Uyarı!",
+          "Bu ürünü silmek istediğinize emin misiniz?",
+           function(){
+          //alertify.success('Ok');
+          window.location.href="/Urunler/Delete/" + id;
+        },
+           function(){
+          //alertify.error('İptal');
+        }
+        ).set('labels', {ok: 'Evet', cancel: 'Hayır'});
+      }
+</script>
 }

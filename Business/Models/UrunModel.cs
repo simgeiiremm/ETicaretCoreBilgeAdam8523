@@ -43,6 +43,9 @@ namespace Business.Models
         [DisplayName("Son Kullanma Tarihi")]
         public string SonKullanmaTarihiDisplay { get; set; }
 
+        [DisplayName("Kategori")]
+        public string KategoriAdiDisplay { get; set; }
+
         #endregion
 
     }

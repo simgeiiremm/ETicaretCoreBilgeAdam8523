@@ -1,7 +1,7 @@
-﻿@model DataAccess.Entities.Urun
+﻿@model UrunModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Ürün Detayı";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -23,10 +23,10 @@
             @Html.DisplayFor(model => model.Aciklamasi)
         </dd>
         <dt class="col-2">
-            @Html.DisplayNameFor(model => model.BirimFiyati)
+            @Html.DisplayNameFor(model => model.BirimFiyatiDisplay)
         </dt>
         <dd class="col-10">
-            @Html.DisplayFor(model => model.BirimFiyati)
+            @Html.DisplayFor(model => model.BirimFiyatiDisplay)
         </dd>
         <dt class="col-2">
             @Html.DisplayNameFor(model => model.StokMiktari)
@@ -35,26 +35,23 @@
             @Html.DisplayFor(model => model.StokMiktari)
         </dd>
         <dt class="col-2">
-            @Html.DisplayNameFor(model => model.SonKullanmaTarihi)
+            @Html.DisplayNameFor(model => model.SonKullanmaTarihiDisplay)
         </dt>
         <dd class="col-10">
-            @Html.DisplayFor(model => model.SonKullanmaTarihi)
+            @Html.DisplayFor(model => model.SonKullanmaTarihiDisplay)
         </dd>
         <dt class="col-2">
-            @Html.DisplayNameFor(model => model.Kategori)
+            @Html.DisplayNameFor(model => model.KategoriAdiDisplay)
         </dt>
         <dd class="col-10">
-            @Html.DisplayFor(model => model.Kategori.Adi)
+            @Html.DisplayFor(model => model.KategoriAdiDisplay)
         </dd>
-        <dt class="col-2">
-            @Html.DisplayNameFor(model => model.Guid)
-        </dt>
         <dd class="col-10">
             @Html.DisplayFor(model => model.Guid)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>&nbsp;|&nbsp;
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Düzenle</a>&nbsp;|&nbsp;
+    <a asp-action="Index">Ürün Listesi</a>
 </div>
