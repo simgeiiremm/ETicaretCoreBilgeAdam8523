@@ -25,6 +25,20 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Roller",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Adi = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Guid = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roller", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Urunler",
                 columns: table => new
                 {
@@ -45,9 +59,36 @@ namespace DataAccess.Migrations
                         name: "FK_Urunler_Kategoriler_KategoriId",
                         column: x => x.KategoriId,
                         principalTable: "Kategoriler",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Kullanicilar",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    KullaniciAdi = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Sifre = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    AktifMi = table.Column<bool>(type: "bit", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    RolId = table.Column<int>(type: "int", nullable: true),
+                    Guid = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Kullanicilar", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Kullanicilar_Roller_RolId",
+                        column: x => x.RolId,
+                        principalTable: "Roller",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Kullanicilar_RolId",
+                table: "Kullanicilar",
+                column: "RolId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Urunler_KategoriId",
@@ -58,7 +99,13 @@ namespace DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Kullanicilar");
+
+            migrationBuilder.DropTable(
                 name: "Urunler");
+
+            migrationBuilder.DropTable(
+                name: "Roller");
 
             migrationBuilder.DropTable(
                 name: "Kategoriler");

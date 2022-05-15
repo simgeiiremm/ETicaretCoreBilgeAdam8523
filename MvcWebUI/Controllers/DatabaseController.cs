@@ -1,6 +1,8 @@
 ﻿using DataAccess.Contexts;
 using DataAccess.Entities;
+using DataAccess.ENums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text;
 
@@ -15,47 +17,68 @@ namespace MvcWebUI.Controllers
             //db.Dispose();
             using (ETicaretContext db = new ETicaretContext())
             {
-                //verileri silme
+                // verileri silme
+
+                var kullaniciDetayiEntities = db.KullaniciDetaylari.ToList();
+                db.KullaniciDetaylari.RemoveRange(kullaniciDetayiEntities);
+
+                var kullaniciEntities = db.Kullanicilar.ToList();
+                db.Kullanicilar.RemoveRange(kullaniciEntities);
+
+                var rolEntities = db.Roller.ToList();
+                db.Roller.RemoveRange(rolEntities);
+
                 var urunEntities = db.Urunler.ToList();
                 db.RemoveRange(urunEntities);
 
                 var kategoriEntities = db.Kategoriler.ToList();
                 db.RemoveRange(kategoriEntities);
 
+                if (kategoriEntities.Count > 0)
+                {
+                    db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Urunler', RESEED, 0)");
+                    db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Kategoriler', RESEED, 0)");
+                    db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Kullanicilar', RESEED, 0)");
+                    db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Roller', RESEED, 0)");
+
+                }
+
                 //verileri ekleme
                 db.Kategoriler.Add(new Kategori()
                 {
                     Adi = "Bilgisayar",
-                    Urunler = new List<Urun>
+                    Urunler = new List<Urun>()
                     {
-                       new Urun()
-                       {
-                           Adi = "Dizüstü Bilgisayar",
-                           BirimFiyati = 3000.5,
-                           StokMiktari = 10,
-                           SonKullanmaTarihi = new DateTime(2032,1,27)
-                       },
-                       new Urun()
-                       {
-                           Adi = "Bilgisayar Faresi",
-                           BirimFiyati = 20.5,
-                           StokMiktari = 20,
-                           SonKullanmaTarihi = DateTime.Parse("19.05.2027", new CultureInfo("tr-TR")) //en-US
-                       },
-                       new Urun()
-                       {
-                           Adi="Bilgisayar Klavyesi",
-                           BirimFiyati = 40,
-                           StokMiktari = 21,
-                           Aciklamasi = "Bilgisayar Bileşeni"
-                       },
-                       new Urun()
-                       {
-                           Adi = "Bilgisayar Monitörü",
-                           BirimFiyati = 2500,
-                           StokMiktari = 27,
-                           Aciklamasi = "Bilgisayar Bileşeni"
-                       }
+                        new Urun()
+                        {
+                            Adi = "Dizüstü Bilgisayar",
+                            BirimFiyati = 3000.5,
+                            StokMiktari = 10,
+                            SonKullanmaTarihi = new DateTime(2032, 1, 27)
+                        },
+                        new Urun()
+                        {
+                            Adi = "Bilgisayar Faresi",
+                            BirimFiyati = 20.5,
+                            StokMiktari = 20,
+                            SonKullanmaTarihi = DateTime.Parse("19.05.2027", new CultureInfo("tr-TR")) 
+                            // İngilizce bölgesel ayar için: en-US, sadece tarih ve ondalık veri tipleri için CultureInfo kullanılmalı,
+                            // ~/Program.cs içersinde tüm uygulama için tek seferde AppCore üzerinden tanımlanıp kullanılabilir.
+                        },
+                        new Urun()
+                        {
+                            Adi = "Bilgisayar Klavyesi",
+                            BirimFiyati = 40,
+                            StokMiktari = 21,
+                            Aciklamasi = "Bilgisayar Bileşeni"
+                        },
+                         new Urun()
+                        {
+                            Adi = "Bilgisayar Monitörü",
+                            BirimFiyati = 2500,
+                            StokMiktari = 27,
+                            Aciklamasi = "Bilgisayar Bileşeni"
+                        }
                     }
                 });
                 db.Kategoriler.Add(new Kategori()
@@ -81,6 +104,45 @@ namespace MvcWebUI.Controllers
                             Adi = "Ekolayzer",
                             BirimFiyati = 1000,
                             StokMiktari = 11
+                        }
+                    }
+                });
+
+                db.Roller.Add(new Rol()
+                {
+                    Adi = "Admin",
+                    Kullanicilar = new List<Kullanici>()
+                    {
+                        new Kullanici()
+                        {
+                            KullaniciAdi = "cagil",
+                            Sifre = "cagil",
+                            AktifMi = true,
+                            KullaniciDetayi = new KullaniciDetayi()
+                            {
+                                Adres = "Çankaya",
+                                Cinsiyet = Cinsiyet.Erkek,
+                                EPosta = "cagil@eticaret.com"
+                            }
+                        }
+                    }
+                });
+                db.Roller.Add(new Rol()
+                {
+                    Adi = "Kullanıcı",
+                    Kullanicilar = new List<Kullanici>()
+                    {
+                        new Kullanici()
+                        {
+                            KullaniciAdi = "leo",
+                            Sifre = "leo",
+                            AktifMi = true,
+                            KullaniciDetayi = new KullaniciDetayi()
+                            {
+                                Adres = "Çankaya",
+                                Cinsiyet = Cinsiyet.Erkek,
+                                EPosta = "leo@eticaret.com"
+                            }
                         }
                     }
                 });

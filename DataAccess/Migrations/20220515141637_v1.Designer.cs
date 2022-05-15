@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ETicaretContext))]
-    [Migration("20220326140330_v2")]
-    partial class v2
+    [Migration("20220515141637_v1")]
+    partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -46,6 +46,64 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Kategoriler");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Kullanici", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("AktifMi")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Guid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KullaniciAdi")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("RolId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Sifre")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolId");
+
+                    b.ToTable("Kullanicilar");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Adi")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Guid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roller");
                 });
 
             modelBuilder.Entity("DataAccess.Entities.Urun", b =>
@@ -87,6 +145,15 @@ namespace DataAccess.Migrations
                     b.ToTable("Urunler");
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.Kullanici", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Rol", "Rol")
+                        .WithMany("Kullanicilar")
+                        .HasForeignKey("RolId");
+
+                    b.Navigation("Rol");
+                });
+
             modelBuilder.Entity("DataAccess.Entities.Urun", b =>
                 {
                     b.HasOne("DataAccess.Entities.Kategori", "Kategori")
@@ -101,6 +168,11 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Entities.Kategori", b =>
                 {
                     b.Navigation("Urunler");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Rol", b =>
+                {
+                    b.Navigation("Kullanicilar");
                 });
 #pragma warning restore 612, 618
         }
