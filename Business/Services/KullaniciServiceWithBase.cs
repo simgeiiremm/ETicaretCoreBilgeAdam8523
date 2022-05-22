@@ -38,7 +38,9 @@ namespace Business.Services
                 Id = e.Id,
                 KullaniciAdi = e.KullaniciAdi,
                 RoleId = e.RoleId,
-                Sifre = e.Sifre
+                Sifre = e.Sifre,
+                RolAdiDisplay = e.Rol.Adi
+
             });
         }
 

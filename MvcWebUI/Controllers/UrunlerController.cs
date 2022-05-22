@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DataAccess.Contexts;
-using DataAccess.Entities;
+﻿using Business.Models;
 using Business.Services;
 using Business.Services.Bases;
-using Business.Models;
+using DataAccess.Contexts;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MvcWebUI.Controllers
 {
+    [Authorize]
     public class UrunlerController : Controller
     {
-        private readonly ETicaretContext _context;
+        //private readonly ETicaretContext _context;
 
         private readonly IUrunService _urunService;
         //kategoriservice 'i ekledik
@@ -35,7 +31,7 @@ namespace MvcWebUI.Controllers
         //    var eTicaretContext = _context.Urunler.Include(u => u.Kategori);
         //    return View(eTicaretContext.ToList());
         //}
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var model = _urunService.Query().ToList();
@@ -61,6 +57,7 @@ namespace MvcWebUI.Controllers
         }
 
         // GET: Urunler/Create
+        [Authorize(Roles ="Admin")]
         public IActionResult Create()
         {
             //burayı yazdık
@@ -81,6 +78,7 @@ namespace MvcWebUI.Controllers
         [ValidateAntiForgeryToken]
 
         //Burada create kısmını değiştirdik
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(UrunModel urun)
         {
             if (ModelState.IsValid)
@@ -98,6 +96,7 @@ namespace MvcWebUI.Controllers
         }
 
         // GET: Urunler/Edit/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -116,6 +115,7 @@ namespace MvcWebUI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(UrunModel urun)
         {
             if (ModelState.IsValid)
@@ -131,8 +131,11 @@ namespace MvcWebUI.Controllers
         }
 
         // GET: Urunler/Delete/5
+        //[Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id)
         {
+            if (!(User.Identity.IsAuthenticated && !User.IsInRole("Admin")))
+                return RedirectToAction("YetkisizIslem", "Hesaplar");
             if (id == null)
             {
                 return View("Hata", "Id gereklidir!");

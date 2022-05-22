@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ETicaretContext))]
-    [Migration("20220515141637_v1")]
+    [Migration("20220522141621_v1")]
     partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,9 +67,6 @@ namespace DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("RolId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -80,9 +77,41 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RolId");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Kullanicilar");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.KullaniciDetayi", b =>
+                {
+                    b.Property<int>("KullaniciId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Adres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Cinsiyet")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EPosta")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("SehirId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UlkeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("KullaniciId");
+
+                    b.HasIndex("SehirId");
+
+                    b.HasIndex("UlkeId");
+
+                    b.ToTable("KullaniciDetaylari");
                 });
 
             modelBuilder.Entity("DataAccess.Entities.Rol", b =>
@@ -104,6 +133,53 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roller");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Sehir", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Adi")
+                        .IsRequired()
+                        .HasMaxLength(170)
+                        .HasColumnType("nvarchar(170)");
+
+                    b.Property<string>("Guid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UlkeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UlkeId");
+
+                    b.ToTable("Sehirler");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Ulke", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Adi")
+                        .IsRequired()
+                        .HasMaxLength(105)
+                        .HasColumnType("nvarchar(105)");
+
+                    b.Property<string>("Guid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ulkeler");
                 });
 
             modelBuilder.Entity("DataAccess.Entities.Urun", b =>
@@ -149,9 +225,49 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("DataAccess.Entities.Rol", "Rol")
                         .WithMany("Kullanicilar")
-                        .HasForeignKey("RolId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.KullaniciDetayi", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Kullanici", "Kullanici")
+                        .WithOne("KullaniciDetayi")
+                        .HasForeignKey("DataAccess.Entities.KullaniciDetayi", "KullaniciId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Sehir", "Sehir")
+                        .WithMany("KullaniciDetaylari")
+                        .HasForeignKey("SehirId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Ulke", "Ulke")
+                        .WithMany("KullaniciDetaylari")
+                        .HasForeignKey("UlkeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Kullanici");
+
+                    b.Navigation("Sehir");
+
+                    b.Navigation("Ulke");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Sehir", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Ulke", "Ulke")
+                        .WithMany("Sehirler")
+                        .HasForeignKey("UlkeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Ulke");
                 });
 
             modelBuilder.Entity("DataAccess.Entities.Urun", b =>
@@ -170,9 +286,26 @@ namespace DataAccess.Migrations
                     b.Navigation("Urunler");
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.Kullanici", b =>
+                {
+                    b.Navigation("KullaniciDetayi");
+                });
+
             modelBuilder.Entity("DataAccess.Entities.Rol", b =>
                 {
                     b.Navigation("Kullanicilar");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Sehir", b =>
+                {
+                    b.Navigation("KullaniciDetaylari");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Ulke", b =>
+                {
+                    b.Navigation("KullaniciDetaylari");
+
+                    b.Navigation("Sehirler");
                 });
 #pragma warning restore 612, 618
         }

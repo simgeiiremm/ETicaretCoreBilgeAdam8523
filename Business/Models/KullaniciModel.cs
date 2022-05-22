@@ -21,5 +21,6 @@ namespace Business.Models
         public bool AktifMi { get; set; }
         [DisplayName("Rol")]
         public int RoleId { get; set; }
+        public string RolAdiDisplay { get; set; }
     }
 }

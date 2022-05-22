@@ -28,11 +28,13 @@
         @TempData["Error"]
     </p>
 }
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Yeni Ürün</a>
+    </p>
+}
 
-
-<p>
-    <a asp-action="Create">Yeni Ürün</a>
-</p>
 <table id="urunler" class="display" style="width:100%">
     <thead>
         <tr>
@@ -87,9 +89,18 @@
                     @Html.DisplayFor(modelItem => item.Guid)
                     </td>*@
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detay</a>&nbsp;|&nbsp;
-                    <a asp-action="Edit" asp-route-id="@item.Id">Düzenle</a>&nbsp;|&nbsp;
-                    <a href="#" onclick="sil(@item.Id);">Sil</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id">Detay</a>
+                        @:&nbsp;| &nbsp;
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Düzenle</a>
+                            <text>&nbsp;| &nbsp;</text>
+                            <a href="#" onclick="sil(@item.Id);">Sil</a>
+                        }
+                    }
                 </td>
             </tr>
         }
@@ -106,25 +117,25 @@
 
 @*datatablesTurkish format ekledik önce json klasörü oluşturduk wwwroot altına sonra open folder diye açıp datatables utf-8 formatı yapıp farklı kaydettik*@
 <script>
-           $(document).ready( function () {
-          $('#urunler').DataTable({
-              language : {
-                  url: "/json/datatablesTurkish.json"
-              }
-          });
-      });
-      function sil(id)
-      {
-          alertify.confirm("Uyarı!",
-          "Bu ürünü silmek istediğinize emin misiniz?",
-           function(){
-          //alertify.success('Ok');
-          window.location.href="/Urunler/Delete/" + id;
-        },
-           function(){
-          //alertify.error('İptal');
-        }
-        ).set('labels', {ok: 'Evet', cancel: 'Hayır'});
+         $(document).ready( function () {
+        $('#urunler').DataTable({
+            language : {
+                url: "/json/datatablesTurkish.json"
+            }
+        });
+    });
+    function sil(id)
+    {
+        alertify.confirm("Uyarı!",
+        "Bu ürünü silmek istediğinize emin misiniz?",
+         function(){
+        //alertify.success('Ok');
+        window.location.href="/Urunler/Delete/" + id;
+      },
+         function(){
+        //alertify.error('İptal');
       }
+      ).set('labels', {ok: 'Evet', cancel: 'Hayır'});
+    }
 </script>
 }

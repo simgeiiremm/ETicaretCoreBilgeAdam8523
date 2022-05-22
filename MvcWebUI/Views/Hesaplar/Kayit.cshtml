@@ -1,0 +1,73 @@
+﻿@using DataAccess.ENums
+@model KullaniciKayitModel
+
+@{
+    ViewData["Title"] = "Kayıt";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Kayit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="KullaniciAdi" class="control-label"></label>
+                <input asp-for="KullaniciAdi" class="form-control" />
+                <span asp-validation-for="KullaniciAdi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sifre" class="control-label"></label>
+                <input asp-for="Sifre" class="form-control" type="password" />
+                <span asp-validation-for="Sifre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SifreOnay" class="control-label"></label>
+                <input asp-for="SifreOnay" class="form-control" type="password" />
+                <span asp-validation-for="SifreOnay" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EPosta" class="control-label"></label>
+                <input asp-for="EPosta" class="form-control" type="email" />
+                <span asp-validation-for="EPosta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Adres" class="control-label"></label>
+                <textarea asp-for="Adres" class="form-control"></textarea>
+                <span asp-validation-for="Adres" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cinsiyet" class="control-label"></label>
+                <div class="col-5">
+                    <input asp-for="Cinsiyet" type="radio" value="@((int)Cinsiyet.Kadın)" checked />@Cinsiyet.Kadın &nbsp;
+                    <input asp-for="Cinsiyet" type="radio" value="@((int)Cinsiyet.Erkek)"/>@Cinsiyet.Erkek
+                    <span asp-validation-for="Adres" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="form-group">
+                <label asp-for="UlkeId" class="control-label"></label>
+                <div>
+                    <select asp-for="UlkeId" asp-items="ViewBag.Ulkeler" class="form-control"><option value="">--Ülke Seçiniz--</option></select>
+                    <span asp-validation-for="UlkeId" class="text-danger"></span>
+                </div>               
+            </div>
+            <div class="form-group">
+                <label asp-for="SehirId" class="control-label"></label>
+                <div>
+                    <select asp-for="SehirId" asp-items="ViewBag.Sehirler" class="form-control"><option value="">--Şehir Seçiniz--</option></select>
+                    <span asp-validation-for="SehirId" class="text-danger"></span>
+                </div>               
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" /> &nbsp;&nbsp;
+                <button type="submit" value="Kaydet" class="btn btn-outline-primary">Temizle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*<partial name="_ValidationScriptsPartial" />*@
+}

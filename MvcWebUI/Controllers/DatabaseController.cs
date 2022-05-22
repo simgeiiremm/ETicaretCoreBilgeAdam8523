@@ -10,6 +10,8 @@ namespace MvcWebUI.Controllers
 {
     public class DatabaseController : Controller
     {
+        //[NonAction]
+        [Obsolete("Bu method artık kullanılmamaktadır!")]
         public IActionResult Seed() // ~/Database/Seed
         {
             //ETicaretContext db = new ETicaretContext();
@@ -28,18 +30,28 @@ namespace MvcWebUI.Controllers
                 var rolEntities = db.Roller.ToList();
                 db.Roller.RemoveRange(rolEntities);
 
+                var sehirEntities = db.Sehirler.ToList();
+                db.Sehirler.RemoveRange(sehirEntities);
+
+                var ulkeEntities = db.Ulkeler.ToList();
+                db.Ulkeler.RemoveRange(ulkeEntities);
+
+
                 var urunEntities = db.Urunler.ToList();
                 db.RemoveRange(urunEntities);
 
                 var kategoriEntities = db.Kategoriler.ToList();
                 db.RemoveRange(kategoriEntities);
 
+               
                 if (kategoriEntities.Count > 0)
                 {
                     db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Urunler', RESEED, 0)");
                     db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Kategoriler', RESEED, 0)");
                     db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Kullanicilar', RESEED, 0)");
                     db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Roller', RESEED, 0)");
+                    db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Sehirler', RESEED, 0)");
+                    db.Database.ExecuteSqlRaw("dbcc CHECKIDENT ('Ulkeler', RESEED, 0)");
 
                 }
 
@@ -107,6 +119,43 @@ namespace MvcWebUI.Controllers
                         }
                     }
                 });
+                db.Ulkeler.Add(new Ulke()
+                {
+                    Adi = "Türkiye",
+                    Sehirler = new List<Sehir>()
+                    {
+                        new Sehir()
+                        {
+                            Adi = "Ankara"
+                        },
+                        new Sehir()
+                        {
+                            Adi = "İstanbul"
+                        },
+                        new Sehir()
+                        {
+                            Adi = "İzmir"
+                        }
+                    }
+                });
+                db.Ulkeler.Add(new Ulke()
+                {
+                    Adi = "Amerika Birleşik Devletleri",
+                    Sehirler = new List<Sehir>()
+                    {
+                        new Sehir()
+                        {
+                            Adi = "New York"
+                        },
+                        new Sehir()
+                        {
+                            Adi = "Los Angeles"
+                        }
+                    }
+                });
+
+                db.SaveChanges();
+
 
                 db.Roller.Add(new Rol()
                 {
@@ -122,7 +171,10 @@ namespace MvcWebUI.Controllers
                             {
                                 Adres = "Çankaya",
                                 Cinsiyet = Cinsiyet.Erkek,
-                                EPosta = "cagil@eticaret.com"
+                                EPosta = "cagil@eticaret.com",
+                                UlkeId = db.Ulkeler.SingleOrDefault(u => u.Adi == "Türkiye").Id,
+                                SehirId = db.Sehirler.SingleOrDefault(s => s.Adi == "Ankara" ).Id
+                                
                             }
                         }
                     }
@@ -141,7 +193,9 @@ namespace MvcWebUI.Controllers
                             {
                                 Adres = "Çankaya",
                                 Cinsiyet = Cinsiyet.Erkek,
-                                EPosta = "leo@eticaret.com"
+                                EPosta = "leo@eticaret.com",
+                                UlkeId = db.Ulkeler.SingleOrDefault(u => u.Adi == "Amerika Birleşik Devletleri").Id,
+                                SehirId = db.Sehirler.SingleOrDefault(s => s.Adi == "Los Angeles" ).Id
                             }
                         }
                     }

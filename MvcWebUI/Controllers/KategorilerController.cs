@@ -1,6 +1,7 @@
 ﻿using AppCore.Business.Models.Results;
 using Business.Models;
 using Business.Services.Bases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MvcWebUI.Controllers
@@ -13,18 +14,20 @@ namespace MvcWebUI.Controllers
         {
             _kategoriService = kategoriService;
         }
-
+        [Authorize]
         public IActionResult Index() // ~/Kategoriler/Index
         {
             List<KategoriModel> model =_kategoriService.Query().ToList();
             return View(model); //Views/Kategoriler/Index.cshtml
         }
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult OlusturGetir() // ~/Kategoriler/OlusturGetir
         {
             return View("OlusturHtml");
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult OlusturGonder(string Adi, string Aciklamasi)
         {
             KategoriModel model = new KategoriModel()
