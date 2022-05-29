@@ -1,4 +1,5 @@
 ﻿using AppCore.Business.Models.Results;
+using Business.Enums;
 using Business.Models;
 
 namespace Business.Services
@@ -6,6 +7,7 @@ namespace Business.Services
     public interface IHesapService
     {
         Result<KullaniciModel> Giris(KullaniciGirisModel model);
+        Result Kayit(KullaniciKayitModel model);
     }
     public class HesapService : IHesapService
     {
@@ -21,6 +23,24 @@ namespace Business.Services
             if (kullanici == null)
                 return new ErrorResult<KullaniciModel>("Geçersiz kullanıcı adı ve şifre!");
             return new SuccessResult<KullaniciModel>(kullanici);
+        }
+
+        public Result Kayit(KullaniciKayitModel model)
+        {
+            KullaniciModel kullanici = new KullaniciModel()
+            {
+                AktifMi = true,
+                KullaniciAdi = model.KullaniciAdi,
+                RoleId = (int)Roller.Kullanıcı,
+                Sifre = model.Sifre,
+                Adres = model.Adres.Trim(),
+                EPosta = model.EPosta.Trim(),
+                UlkeId = model.UlkeId,
+                SehirId = model.SehirId,
+                Cinsiyet = model.Cinsiyet
+               
+            };
+            return _kullaniciService.Add(kullanici);
         }
     }
 }

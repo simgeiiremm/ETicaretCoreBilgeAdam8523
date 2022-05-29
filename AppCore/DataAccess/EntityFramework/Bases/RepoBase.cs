@@ -84,5 +84,9 @@ namespace AppCore.DataAccess.EntityFramework.Bases
             if(save)
                 Save();
         }
+        public bool EntityExists(Expression<Func<TEntity, bool>> predicate)
+        {
+            return Query().Any(predicate);
+        }
     }
 }

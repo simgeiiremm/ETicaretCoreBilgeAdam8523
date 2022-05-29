@@ -41,23 +41,23 @@
                 <label asp-for="Cinsiyet" class="control-label"></label>
                 <div class="col-5">
                     <input asp-for="Cinsiyet" type="radio" value="@((int)Cinsiyet.Kadın)" checked />@Cinsiyet.Kadın &nbsp;
-                    <input asp-for="Cinsiyet" type="radio" value="@((int)Cinsiyet.Erkek)"/>@Cinsiyet.Erkek
+                    <input asp-for="Cinsiyet" type="radio" value="@((int)Cinsiyet.Erkek)" />@Cinsiyet.Erkek
                     <span asp-validation-for="Adres" class="text-danger"></span>
                 </div>
-                </div>
-                <div class="form-group">
+            </div>
+            <div class="form-group">
                 <label asp-for="UlkeId" class="control-label"></label>
                 <div>
-                    <select asp-for="UlkeId" asp-items="ViewBag.Ulkeler" class="form-control"><option value="">--Ülke Seçiniz--</option></select>
-                    <span asp-validation-for="UlkeId" class="text-danger"></span>
-                </div>               
+                    <select asp-for="UlkeId" asp-items="ViewBag.Ulkeler" class="form-control" id="ulkeler"><option value="">--Ülke Seçiniz--</option></select>
+                    <span asp-validation-for="UlkeId" class="text-danger" id="ulkemesaj"></span>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="SehirId" class="control-label"></label>
                 <div>
-                    <select asp-for="SehirId" asp-items="ViewBag.Sehirler" class="form-control"><option value="">--Şehir Seçiniz--</option></select>
+                    <select asp-for="SehirId" asp-items="ViewBag.Sehirler" class="form-control sehirler"><option value="">--Şehir Seçiniz--</option></select>
                     <span asp-validation-for="SehirId" class="text-danger"></span>
-                </div>               
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Kaydet" class="btn btn-primary" /> &nbsp;&nbsp;
@@ -68,6 +68,35 @@
 </div>
 
 @section Scripts{
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
     @*<partial name="_ValidationScriptsPartial" />*@
+
+<script>
+    $(function(){
+        $("#ulkeler").change(function(){
+            var seciliUlkeId = $("#ulkeler").val();
+            $(".sehirler").empty();
+            if(seciliUlkeId == ""){
+                $("#ulkemesaj").text("Ülke seçiniz..");
+                $(".sehirler").append('<option value="">-- Ülke Seçiniz --</option>');
+            }
+            else {
+            $.getJSON(
+                //"/Sehirler/SehirlerGet" + seciliUlkeId, //Sehirler/SehirlerGet/1
+                "/Sehirler/SehirlerGet",
+                {ulkeId: seciliUlkeId},
+                function(sehirler){
+                    $(".sehirler").append('<option value="">-- Şehir Seçiniz --</option>');
+                    for(var i = 0; i < sehirler.length; i++)
+                    {
+                        $(".sehirler").append('<option value="' + sehirler[i].id + '">' + sehirler[i].adi + '</option>');
+                    }
+                }
+             );
+            }
+        });
+    });
+</script>
 }

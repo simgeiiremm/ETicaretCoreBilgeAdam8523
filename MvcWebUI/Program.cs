@@ -31,6 +31,7 @@ builder.Services.AddScoped<IUrunService, UrunService>();
 builder.Services.AddScoped<IHesapService, HesapService>();
 builder.Services.AddScoped<IKullaniciService, KullaniciService>();
 builder.Services.AddScoped<IUlkeService, UlkeService>();
+builder.Services.AddScoped<ISehirService, SehirService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

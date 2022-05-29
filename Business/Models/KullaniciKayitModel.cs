@@ -21,13 +21,17 @@ namespace Business.Models
         [DisplayName("Şifre Onay")]
         [Compare("Sifre", ErrorMessage ="Şifre ile şifre onay aynı olmalıdır!")]
         public string SifreOnay { get; set; }
+
         [Required(ErrorMessage = "{0} zorunludur!")]
         [StringLength(200, ErrorMessage = "{0} maksimum {1} karakter olmalıdır!")]
         [DisplayName("E-Posta")]
         public string EPosta { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "{0} zorunludur!")]
         public string Adres { get; set; }
+
         public Cinsiyet Cinsiyet { get; set; }
+
         [Required(ErrorMessage = "{0} zorunludur!")]
         [DisplayName("Ülke")]
         public int? UlkeId { get; set; }
